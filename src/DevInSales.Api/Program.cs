@@ -15,7 +15,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"))
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLConnection"))
+);
+builder.Services.AddDbContext<IdentityDataContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SQLConnection"))
 );
 
 builder.Services.AddScoped<ISaleService, SaleService>();
