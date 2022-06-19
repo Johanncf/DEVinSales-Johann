@@ -1,6 +1,5 @@
 using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
-using DevInSales.EFCoreApi.Api.DTOs.Request;
 using DevInSales.EFCoreApi.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using RegexExamples;

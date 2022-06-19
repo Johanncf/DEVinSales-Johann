@@ -10,9 +10,15 @@ namespace DevInSales.Core.Data.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<IdentityUser>(entity =>
+            base.OnModelCreating(builder);  
+            builder.Entity<IdentityRole>(entity =>
             {
-                entity.HasKey(p => p.Id);
+                entity.HasData(new List<IdentityRole>()
+                {
+                    new IdentityRole("Administrador"),
+                    new IdentityRole("Gerente"),
+                    new IdentityRole("Usuario")
+                });
             });
         }
     }
