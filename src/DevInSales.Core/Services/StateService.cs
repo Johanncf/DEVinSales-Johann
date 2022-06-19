@@ -14,7 +14,7 @@ namespace DevInSales.Core.Services
             _context = context;
         }
 
-        public List<ReadState> GetAll(string? name)
+        public List<StateResponse> GetAll(string? name)
         {
             return _context.States
                 .Include(p => p.Cities)
@@ -24,14 +24,14 @@ namespace DevInSales.Core.Services
                             ? p.Name.ToUpper().Contains(name.ToUpper())
                             : true
                 )
-                .Select(s => ReadState.StateToReadState(s))
+                .Select(s => StateResponse.StateToReadState(s))
                 .ToList();
         }
 
-        public ReadState GetById(int stateId)
+        public StateResponse GetById(int stateId)
         {
             var state = _context.States.Include(p => p.Cities).FirstOrDefault(p => p.Id == stateId);
-            return ReadState.StateToReadState(state);
+            return StateResponse.StateToReadState(state);
         }
     }
 }

@@ -1,4 +1,4 @@
-using DevInSales.Api.Dtos;
+using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
 using DevInSales.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -60,7 +60,7 @@ namespace DevInSales.Api.Controllers
 
 
         [HttpPut("{id}")]
-        public ActionResult AtualizarProduto(AddProduct model, int id)
+        public ActionResult AtualizarProduto(AddProductRequest model, int id)
         {
             var productOld = _productService.ObterProductPorId(id);
 
@@ -158,7 +158,7 @@ namespace DevInSales.Api.Controllers
         /// <response code="201">Cadastrado com sucesso.</response>
         /// <response code="400">Bad Request Esse produto já existe na base de dados</response>
         [HttpPost]
-        public ActionResult PostProduct(AddProduct model)
+        public ActionResult PostProduct(AddProductRequest model)
         {
             var product = new Product(model.Name, model.SuggestedPrice);
 

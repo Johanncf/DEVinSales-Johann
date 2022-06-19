@@ -5,8 +5,8 @@ namespace DevInSales.Core.Interfaces
 {
     public interface ICityService
     {
-        List<ReadCity> GetAll(int stateId, string? name);
-        ReadCity GetById(int cityId);
+        List<CityResponse> GetAll(int stateId, string? name);
+        CityResponse GetById(int cityId);
 
         void Add(City city);
     }

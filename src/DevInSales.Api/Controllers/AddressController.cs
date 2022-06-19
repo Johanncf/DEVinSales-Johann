@@ -1,4 +1,4 @@
-using DevInSales.Api.Dtos;
+using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
 using DevInSales.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -87,7 +87,7 @@ namespace DevInSales.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult AddAddress(int stateId, int cityId, AddAddress model)
+        public ActionResult AddAddress(int stateId, int cityId, AddAddressRequest model)
         {
             var state = _stateService.GetById(stateId);
             if (state == null)
@@ -163,7 +163,7 @@ namespace DevInSales.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult UpdateAddress(int addressId, UpdateAddress model)
+        public ActionResult UpdateAddress(int addressId, UpdateAddressRequest model)
         {
             var address = _addressService.GetById(addressId);
             if (address == null)

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using DevInSales.Core.Entities;
 
-namespace DevInSales.EFCoreApi.Api.DTOs.Request
+namespace DevInSales.Core.Data.Dtos
 {
     public class UserResponse
     {

@@ -1,5 +1,4 @@
 ﻿using DevInSales.Core.Data.Dtos;
-using DevInSales.Core.Entities;
 using DevInSales.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

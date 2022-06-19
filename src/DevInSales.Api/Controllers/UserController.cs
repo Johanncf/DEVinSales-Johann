@@ -1,4 +1,4 @@
-using DevInSales.Api.Dtos;
+using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
 using DevInSales.EFCoreApi.Api.DTOs.Request;
 using DevInSales.EFCoreApi.Core.Interfaces;
@@ -102,7 +102,7 @@ namespace DevInSales.Api.Controllers
         /// <response code="204">Pesquisa realizada com sucesso porém não retornou nenhum resultado</response>
         /// <response code="400">Formato invalido</response>
         [HttpPost]
-        public ActionResult CriarUser(AddUser model)
+        public ActionResult CriarUser(RegisterUserRequest model)
         {
             var user = new User(model.Email, model.Password, model.Name, model.BirthDate);
 

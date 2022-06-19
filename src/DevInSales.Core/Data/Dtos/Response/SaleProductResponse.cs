@@ -20,6 +20,6 @@ namespace DevInSales.Core.Data.Dtos
             Amount = amount;
             UnitPrice = unitPrice;
             Total = total;
-        }    
+        }
     }
 }

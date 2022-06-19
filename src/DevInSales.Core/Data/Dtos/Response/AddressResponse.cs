@@ -2,7 +2,7 @@ using DevInSales.Core.Entities;
 
 namespace DevInSales.Core.Data.Dtos
 {
-    public class ReadAddress
+    public class AddressResponse
     {
         public int Id { get; set; }
         public string Street { get; set; }
@@ -10,13 +10,13 @@ namespace DevInSales.Core.Data.Dtos
         public int Number { get; set; }
         public string Complement { get; set; }
         public ReadAddressCity City { get; set; }
-        public ReadCityState State { get; set; }
+        public CityStateResponse State { get; set; }
         
-        public static ReadAddress? AddressToReadAddress(Address? address)
+        public static AddressResponse? AddressToReadAddress(Address? address)
         {
             if (address == null)
                 return null;
-            return new ReadAddress
+            return new AddressResponse
             {
                 Id = address.Id,
                 Street = address.Street,
@@ -24,7 +24,7 @@ namespace DevInSales.Core.Data.Dtos
                 Number = address.Number,
                 Complement = address.Complement,
                 City = new ReadAddressCity { Id = address.City.Id, Name = address.City.Name },
-                State = new ReadCityState
+                State = new CityStateResponse
                 {
                     Id = address.City.State.Id,
                     Name = address.City.State.Name,

@@ -13,7 +13,7 @@ namespace DevInSales.Core.Services
     {
       _context = context;
     }
-    public List<ReadAddress> GetAll(int? stateId, int? cityId, string? street, string? cep)
+    public List<AddressResponse> GetAll(int? stateId, int? cityId, string? street, string? cep)
     {
       var query = _context.Addresses
           .Include(a => a.City)
@@ -27,7 +27,7 @@ namespace DevInSales.Core.Services
         query = query.Where(x => x.Street.ToUpper().Contains(street.ToUpper()));
       if (!string.IsNullOrEmpty(cep))
         query = query.Where(x => x.Cep == cep);
-      return query.Select(x => ReadAddress.AddressToReadAddress(x)).ToList();
+      return query.Select(x => AddressResponse.AddressToReadAddress(x)).ToList();
     }
 
     public void Add(Address address)

@@ -1,4 +1,4 @@
-using DevInSales.Api.Dtos;
+using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
 using DevInSales.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -116,7 +116,7 @@ namespace DevInSales.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult AddCity(int stateId, AddCity model)
+        public ActionResult AddCity(int stateId, AddCityRequest model)
         {
             var state = _stateService.GetById(stateId);
             if (state == null)
