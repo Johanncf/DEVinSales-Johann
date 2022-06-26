@@ -8,13 +8,16 @@ namespace DevInSales.Core.Data.Dtos
 {
     public class LoginResponse
     {
+        public LoginResponse()
+        {
+            Errors = new List<string>();
+        }
+
         public bool Success => Errors.Count == 0;
         public string Token { get; private set; }
-        public List<string> Errors => new List<string>();
+        public List<string> Errors { get; private set; }
 
-        public LoginResponse(string token) => 
-            Token = token;
-
+        public void SetToken(string token) => Token = token;    
         public void AddError(string error) => Errors.Add(error);
     }
 }

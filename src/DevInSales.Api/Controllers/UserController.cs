@@ -1,6 +1,9 @@
 using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
+using DevInSales.Core.Identity.Constants;
+using DevInSales.Core.Identity.Interfaces;
 using DevInSales.EFCoreApi.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RegexExamples;
 
@@ -11,11 +14,15 @@ namespace DevInSales.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IIdentityService _identityService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IIdentityService identityService)
         {
             _userService = userService;
+            _identityService = identityService;
         }
+
+
 
         /// <summary>
         /// Busca uma lista de usuários.
@@ -38,18 +45,20 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="204">Pesquisa realizada com sucesso porém não retornou nenhum resultado</response>
 
+        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Gerente)]
         [HttpGet]
-        public ActionResult<List<User>> ObterUsers(string? nome, string? DataMin, string? DataMax)
+        public ActionResult<List<UserResponse>> ObterUsers(string? nome, string? DataMin, string? DataMax)
         {
 
             var users = _userService.ObterUsers(nome, DataMin, DataMax);
             if (users == null || users.Count == 0)
                 return NoContent();
 
-            var ListaDto = users.Select(user => UserResponse.ConverterParaEntidade(user)).ToList();
 
-            return Ok(ListaDto);
+            return Ok(users);
         }
+
 
 
         /// <summary>
@@ -74,13 +83,11 @@ namespace DevInSales.Api.Controllers
         [HttpGet("{id}")]
         public ActionResult<User> ObterUserPorId(int id)
         {
-            var user = _userService.ObterPorId(id);
-            if (user == null)
+            var userDTO = _userService.ObterPorId(id);
+            if (userDTO == null)
                 return NotFound();
 
-            var UserDto = UserResponse.ConverterParaEntidade(user);
-
-            return Ok(UserDto);
+            return Ok(userDTO);
         }
 
         /// <summary>
@@ -100,26 +107,51 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="204">Pesquisa realizada com sucesso porém não retornou nenhum resultado</response>
         /// <response code="400">Formato invalido</response>
-        [HttpPost]
-        public ActionResult CriarUser(RegisterUserRequest model)
+        [HttpPost("register")]
+        public async Task<IActionResult> CreateUser(RegisterUserRequest model)
         {
-            var user = new User(model.Email, model.Password, model.Name, model.BirthDate);
-
-            var verifyEmail = new EmailValidate();
-
-            if (!verifyEmail.IsValidEmail(user.Email))
-                return BadRequest("Email inválido");
-
-            if (user.BirthDate.AddYears(18) > DateTime.Now)
-                return BadRequest("Usuário não tem idade suficiente");
-
-            if (user.Password.Length < 4 || user.Password.Length == 0 || user.Password.All(ch => ch == user.Password[0]))
-                return BadRequest("Senha inválida, deve conter pelo menos 4 caracteres e deve conter ao menos um caracter diferente");
+            if (model.BirthDate.AddYears(18) > DateTime.Now)
+                return Forbid();
 
 
-            var id = _userService.CriarUser(user);
+            var response = await _identityService.RegisterUserAsync(model);
+            if (!response.Success) return BadRequest(response);
 
-            return CreatedAtAction(nameof(ObterUserPorId), new { id = id }, id);
+            return Ok(response);
+        }
+
+        [Route("login")]
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginRequest request)
+        {
+            try
+            {
+                var response = await _identityService.LoginAsync(request);
+                if (response is null) return StatusCode(StatusCodes.Status500InternalServerError, "Not tracked server error.");
+                if (!response.Success) return BadRequest(response);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                var response = await _identityService.ChangePasswordAsync(request.Email, request.CurrentPassword, request.NewPassword);
+
+                if (!response.Success) return BadRequest(response);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+            
         }
 
         /// <summary>
@@ -128,7 +160,8 @@ namespace DevInSales.Api.Controllers
         /// <response code="204">Endereço deletado com sucesso</response>
         /// <response code="404">Not Found, endereço não encontrado.</response>
         /// <response code="500">Internal Server Error, erro interno do servidor.</response>
-
+        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Gerente)]
         [HttpDelete("{id}")]
         public ActionResult ExcluirUser(int id)
         {

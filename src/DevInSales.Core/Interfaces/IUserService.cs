@@ -1,12 +1,13 @@
+using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
 
 namespace DevInSales.EFCoreApi.Core.Interfaces
 {
     public interface IUserService
     {
-        public List<User> ObterUsers(string? name, string? DateMin, string? DateMax);
+        public List<UserResponse> ObterUsers(string? name, string? DateMin, string? DateMax);
 
-        public User? ObterPorId(int id);
+        public UserResponse? ObterPorId(int id);
 
         public int CriarUser(User user);
 

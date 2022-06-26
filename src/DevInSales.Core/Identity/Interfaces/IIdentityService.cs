@@ -9,7 +9,8 @@ namespace DevInSales.Core.Identity.Interfaces
 {
     public interface IIdentityService
     {
-        Task<RegistrationResponse> RegisterUser(RegisterUserRequest userRequest);
-        Task<LoginResponse> Login(LoginRequest loginRequest);
+        Task<RegistrationResponse> RegisterUserAsync(RegisterUserRequest userRequest);
+        Task<LoginResponse> LoginAsync(LoginRequest loginRequest);
+        Task<ChangePasswordResponse> ChangePasswordAsync(string email, string currentPassword, string newPasswordt);   
     }
 }

@@ -8,14 +8,13 @@ namespace DevInSales.Core.Data.Dtos
 {
     public class RegistrationResponse
     {
-        public bool Success { get; private set; }
-        public List<string> Errors { get; private set; }
-
-        public RegistrationResponse(bool success = true)
+        public RegistrationResponse()
         {
-            Success = success; 
             Errors = new List<string>();
         }
+
+        public bool Success => Errors.Count == 0;
+        public List<string> Errors { get; set; }
         
         public void AddErrors(List<string> errors) => Errors.AddRange(errors);
     }

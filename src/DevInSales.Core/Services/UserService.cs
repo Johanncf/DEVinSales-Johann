@@ -1,5 +1,8 @@
 using DevInSales.Core.Data.Context;
+using DevInSales.Core.Data.Dtos;
 using DevInSales.EFCoreApi.Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DevInSales.Core.Entities
 {
@@ -19,23 +22,49 @@ namespace DevInSales.Core.Entities
         }
 
 
-        public User? ObterPorId(int id)
+        public UserResponse? ObterPorId(int id)
         {
-            return _context.Users.Find(id);
+            var user = _context.Users
+                .Include(user => user.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefault(user => user.Id == id);
+
+            if (user is null) throw new ArgumentNullException();
+
+            return new UserResponse(
+                user.Id,
+                user.Email,
+                user.Name,
+                user.BirthDate,
+                user.UserRoles.Select(ur => new RoleResponse(ur.Role.Name, ur.RoleId)).ToList());
         }
 
 
-        public List<User> ObterUsers(string? name, string? DataMin, string? DataMax)
+        public List<UserResponse> ObterUsers(string? name, string? DataMin, string? DataMax)
         {
-            var query = _context.Users.AsQueryable();
+            var query = _context.Users
+                .Include(user => user.UserRoles)
+                .ThenInclude(userRole => userRole.Role)
+                .AsQueryable();
             if (!string.IsNullOrEmpty(name))
-                query = query.Where(p => p.Name.ToUpper().Contains(name.ToUpper()));
+                query = query.Where(p => string.IsNullOrWhiteSpace(name) ? true : p.Name.ToUpper().Contains(name.ToUpper()));
             if (!string.IsNullOrEmpty(DataMin))
                 query = query.Where(p => p.BirthDate >= DateTime.Parse(DataMin));
             if (!string.IsNullOrEmpty(DataMax))
                 query = query.Where(p => p.BirthDate <= DateTime.Parse(DataMax));
 
-            return query.ToList();
+            var userList = query.ToList();
+
+            var dtoList = query.Select(user => new UserResponse(
+                    user.Id,
+                    user.Email,
+                    user.Name,
+                    user.BirthDate,
+                    user.UserRoles.Select(ur => new RoleResponse(ur.Role.Name, ur.Role.Id)).ToList()
+                )
+            ).ToList();
+
+            return dtoList;
         }
         public void RemoverUser(int id)
         {
