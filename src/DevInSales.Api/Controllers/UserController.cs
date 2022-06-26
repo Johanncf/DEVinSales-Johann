@@ -10,6 +10,7 @@ using RegexExamples;
 namespace DevInSales.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]")]
     public class UserController : ControllerBase
     {
@@ -45,21 +46,18 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="204">Pesquisa realizada com sucesso porém não retornou nenhum resultado</response>
 
-        [Authorize(Roles = Roles.Admin)]
-        [Authorize(Roles = Roles.Gerente)]
         [HttpGet]
-        public ActionResult<List<UserResponse>> ObterUsers(string? nome, string? DataMin, string? DataMax)
+        [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
+        public ActionResult<List<UserResponse>> GetUsers(string? nome, string? DataMin, string? DataMax)
         {
 
-            var users = _userService.ObterUsers(nome, DataMin, DataMax);
+            var users = _userService.GetUsers(nome, DataMin, DataMax);
             if (users == null || users.Count == 0)
                 return NoContent();
 
 
             return Ok(users);
         }
-
-
 
         /// <summary>
         /// Busca um usuário por id.
@@ -81,9 +79,10 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="404">Not Found, estado não encontrado no stateId informado.</response>
         [HttpGet("{id}")]
-        public ActionResult<User> ObterUserPorId(int id)
+        [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
+        public ActionResult<User> GetUserById(int id)
         {
-            var userDTO = _userService.ObterPorId(id);
+            var userDTO = _userService.GetUserById(id);
             if (userDTO == null)
                 return NotFound();
 
@@ -98,7 +97,8 @@ namespace DevInSales.Api.Controllers
         /// Exemplo de resposta:
         /// [
         ///   {
-        ///     "id": 1
+        ///     "Success": true,
+        ///     "Errors": [ ]
         ///   }
         /// ]
         /// </para>
@@ -107,26 +107,40 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="204">Pesquisa realizada com sucesso porém não retornou nenhum resultado</response>
         /// <response code="400">Formato invalido</response>
-        [HttpPost("register")]
-        public async Task<IActionResult> CreateUser(RegisterUserRequest model)
+        [HttpPost]
+        [Route("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterUser(RegisterUserRequest model)
         {
-            if (model.BirthDate.AddYears(18) > DateTime.Now)
-                return Forbid();
+            try
+            {
+                if (model.BirthDate.AddYears(18) > DateTime.Now)
+                    return Forbid();
 
 
-            var response = await _identityService.RegisterUserAsync(model);
-            if (!response.Success) return BadRequest(response);
+                var response = await _identityService.RegisterUserAsync(model);
+                if (!response.Success) return BadRequest(response);
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);    
+            }
+            
         }
 
+        /// <summary>
+        /// Autentica o usuário.
+        /// </summary>
         [Route("login")]
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginRequest request)
         {
             try
             {
-                var response = await _identityService.LoginAsync(request);
+                LoginResponse response = await _identityService.LoginAsync(request);
                 if (response is null) return StatusCode(StatusCodes.Status500InternalServerError, "Not tracked server error.");
                 if (!response.Success) return BadRequest(response);
                 return Ok(response);
@@ -137,7 +151,11 @@ namespace DevInSales.Api.Controllers
             }
         }
 
-        [HttpPost("change-password")]
+        /// <summary>
+        /// Altera a senha de acesso do usuário.
+        /// </summary>
+        [HttpPost]
+        [Route("change-password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
         {
             try
@@ -155,19 +173,38 @@ namespace DevInSales.Api.Controllers
         }
 
         /// <summary>
+        /// Adiciona uma role (papel) ao usuário.
+        /// </summary>
+        [HttpPost]
+        [Route("set-role")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> SetRoleByUserId(SetRoleRequest model)
+        {
+            try
+            {
+                var response = await _identityService.SetRoleAsync(model);
+                if (response.Success) return Ok(response);
+                return BadRequest(response);    
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Deleta um usuário.
         /// </summary>
         /// <response code="204">Endereço deletado com sucesso</response>
         /// <response code="404">Not Found, endereço não encontrado.</response>
         /// <response code="500">Internal Server Error, erro interno do servidor.</response>
-        [Authorize(Roles = Roles.Admin)]
-        [Authorize(Roles = Roles.Gerente)]
         [HttpDelete("{id}")]
-        public ActionResult ExcluirUser(int id)
+        [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
+        public ActionResult DeleteUser(int id)
         {
             try
             {
-                _userService.RemoverUser(id);
+                _userService.DeleteUser(id);
                 return NoContent();
             }
             catch (Exception ex)

@@ -5,12 +5,12 @@ namespace DevInSales.EFCoreApi.Core.Interfaces
 {
     public interface IUserService
     {
-        public List<UserResponse> ObterUsers(string? name, string? DateMin, string? DateMax);
+        public List<UserResponse> GetUsers(string? name, string? DateMin, string? DateMax);
 
-        public UserResponse? ObterPorId(int id);
+        public UserResponse? GetUserById(int id);
 
-        public int CriarUser(User user);
+        public int CreateUser(User user);
 
-        public void RemoverUser(int id);
+        public void DeleteUser(int id);
     }
 }

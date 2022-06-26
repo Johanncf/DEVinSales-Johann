@@ -12,14 +12,13 @@ namespace DevInSales.Core.Data.Dtos
         public string ProductName { get; private set; }
         public int Amount { get; private set; }
         public decimal UnitPrice { get; private set; }
-        public decimal Total { get; private set; }
+        public decimal Total => Amount * UnitPrice; 
 
-        public SaleProductResponse(string productName, int amount, decimal unitPrice, decimal total)
+        public SaleProductResponse(string productName, int amount, decimal unitPrice)
         {
             ProductName = productName;
             Amount = amount;
             UnitPrice = unitPrice;
-            Total = total;
         }
     }
 }

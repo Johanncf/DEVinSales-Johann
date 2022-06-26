@@ -43,20 +43,23 @@ namespace DevInSales.Core.Services
         }
 
        
-        public int GetSaleProductById(int saleProductId)
+        public SaleProductResponse GetSaleProductById(int saleProductId)
         {
             SaleProduct? saleProduct = _context.SaleProducts
                 .Include(p => p.Sales)
                 .Include(p => p.Products)
                 .FirstOrDefault(p => p.Id == saleProductId);
 
-            if (saleProduct == null)
-            {
-                
-                return 0;
-            }
+            if (saleProduct is null) return default;
 
-            return saleProduct.Id;
+            var saleProductDTO = new SaleProductResponse(
+                saleProduct.Products.Name,
+                saleProduct.Amount,
+                saleProduct.UnitPrice
+                );
+
+
+            return saleProductDTO;
 
         }
 

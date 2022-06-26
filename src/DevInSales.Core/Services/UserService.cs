@@ -14,7 +14,7 @@ namespace DevInSales.Core.Entities
             _context = context;
         }
 
-        public int CriarUser(User user)
+        public int CreateUser(User user)
         {
             _context.Users.Add(user);
             _context.SaveChanges();
@@ -22,7 +22,7 @@ namespace DevInSales.Core.Entities
         }
 
 
-        public UserResponse? ObterPorId(int id)
+        public UserResponse? GetUserById(int id)
         {
             var user = _context.Users
                 .Include(user => user.UserRoles)
@@ -40,7 +40,7 @@ namespace DevInSales.Core.Entities
         }
 
 
-        public List<UserResponse> ObterUsers(string? name, string? DataMin, string? DataMax)
+        public List<UserResponse> GetUsers(string? name, string? DataMin, string? DataMax)
         {
             var query = _context.Users
                 .Include(user => user.UserRoles)
@@ -66,7 +66,7 @@ namespace DevInSales.Core.Entities
 
             return dtoList;
         }
-        public void RemoverUser(int id)
+        public void DeleteUser(int id)
         {
             if (id >= 0)
             {

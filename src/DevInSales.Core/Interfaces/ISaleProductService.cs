@@ -11,7 +11,7 @@ namespace DevInSales.Core.Interfaces
     public interface ISaleProductService
     {
 
-        public int GetSaleProductById(int id);
+        public SaleProductResponse GetSaleProductById(int id);
 
         public int CreateSaleProduct(int saleId, SaleProductRequest saleProduct);
         

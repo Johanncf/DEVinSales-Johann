@@ -98,6 +98,22 @@ namespace DevInSales.Core.Identity.Service
             return response;
         }
 
+        public async Task<SetRoleResponse> SetRoleAsync(SetRoleRequest setRoleRequest)
+        {
+            var user = await _userManager.FindByIdAsync(setRoleRequest.UserId.ToString());
+
+            var result = await _userManager.AddToRoleAsync(user, setRoleRequest.RoleName);   
+
+            SetRoleResponse response = new SetRoleResponse();
+            if (!result.Succeeded && !result.Errors.Any())
+            {
+                IEnumerable<string> errors = result.Errors.Select(error => error.Description.ToString());
+                response.AddErrors(errors);
+            }
+
+            return response;
+        }
+
         private async Task<string> GenerateTokenAsyn(string email)
         {
             var user =  await _userManager.FindByEmailAsync(email);

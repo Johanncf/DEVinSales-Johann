@@ -1,11 +1,14 @@
 using DevInSales.Core.Data.Dtos;
 using DevInSales.Core.Entities;
+using DevInSales.Core.Identity.Constants;
 using DevInSales.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevInSales.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
@@ -60,16 +63,17 @@ namespace DevInSales.Api.Controllers
 
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
         public ActionResult AtualizarProduto(AddProductRequest model, int id)
         {
             var productOld = _productService.ObterProductPorId(id);
 
-            if (model == null)
+            if (productOld == null)
                 return NotFound();
             if (!ModelState.IsValid || model.Name.ToLower() == "string")
                 return BadRequest("O objeto tem que ser construido com um nome e nome tem que ser diferente de string");
             if (_productService.ProdutoExiste(model.Name))
-                return BadRequest("esse nome já existe na base de dados");
+                return BadRequest("Este produto já existe na base de dados");
 
 
             productOld.AtualizarDados(model.Name, model.SuggestedPrice);
@@ -90,6 +94,7 @@ namespace DevInSales.Api.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult Delete(int id)
         {
             try
@@ -158,6 +163,7 @@ namespace DevInSales.Api.Controllers
         /// <response code="201">Cadastrado com sucesso.</response>
         /// <response code="400">Bad Request Esse produto já existe na base de dados</response>
         [HttpPost]
+        [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
         public ActionResult PostProduct(AddProductRequest model)
         {
             var product = new Product(model.Name, model.SuggestedPrice);
