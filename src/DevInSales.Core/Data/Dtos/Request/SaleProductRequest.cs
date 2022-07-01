@@ -15,14 +15,6 @@ namespace DevInSales.Core.Data.Dtos
         public int? Amount { get; set; }
 
 
-        public SaleProductRequest(int productId, decimal? unitPrice, int? amount)
-        {
-            ProductId = productId;
-            UnitPrice = unitPrice;
-            Amount = amount;
-        }
-
-
         public SaleProduct ConvertIntoSaleProduct(int saleId)
         {
 

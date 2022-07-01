@@ -48,7 +48,7 @@ namespace DevInSales.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult GetCitiesByStateId(int stateId, string? name)
+        public IActionResult GetCitiesByStateId(int stateId, string? name)
         {
             var state = _stateService.GetById(stateId);
             if (state == null)

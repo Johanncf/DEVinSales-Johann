@@ -27,7 +27,7 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="404">Not Found, quando o saleId não for encontrado.</response>
         [HttpGet("{saleId}")]
-        public ActionResult<SaleResponse> GetSaleById(int saleId)
+        public IActionResult GetSaleById(int saleId)
         {
             var sale = _saleService.GetSaleById(saleId);
             if (sale == null)
@@ -43,7 +43,7 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="204">No Content, caso o usuário ainda não tenha cadastrado uma venda.</response>
         [HttpGet("/api/user/{userId}/sales")]
-        public ActionResult<Sale> GetSalesBySellerId(int? userId)
+        public IActionResult GetSalesBySellerId(int? userId)
         {
             var sales = _saleService.GetSaleBySellerId(userId);
             if (sales.Count == 0)
@@ -58,7 +58,7 @@ namespace DevInSales.Api.Controllers
         /// <response code="200">Sucesso.</response>
         /// <response code="204">No Content, caso o usuário ainda não tenha cadastrado uma compra.</response>
         [HttpGet("/api/user/{userId}/buy")]
-        public ActionResult<Sale> GetSalesByBuyerId(int? userId)
+        public IActionResult GetSalesByBuyerId(int? userId)
         {
             var sales = _saleService.GetSaleByBuyerId(userId);
             if (sales.Count == 0)
@@ -76,7 +76,7 @@ namespace DevInSales.Api.Controllers
         [HttpPost("/api/user/{userId}/sales")]
         [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public ActionResult<int> CreateSaleBySellerId(int userId, SaleBySellerRequest saleRequest)
+        public IActionResult CreateSaleBySellerId(int userId, SaleBySellerRequest saleRequest)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace DevInSales.Api.Controllers
         [HttpPatch("{saleId}/product/{productId}/amount/{amount}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
-        public ActionResult UpdateAmount(int saleId, int productId, int amount)
+        public IActionResult UpdateAmount(int saleId, int productId, int amount)
         {
             try
             {
@@ -222,7 +222,7 @@ namespace DevInSales.Api.Controllers
         //Endpoint criado apenas para servir como caminho do POST {saleId}/deliver
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("/api/delivery/{deliveryId}")]
-        public ActionResult<Delivery> GetDeliveryById(int deliveryId)
+        public IActionResult GetDeliveryById(int deliveryId)
         {
             Delivery delivery = _saleService.GetDeliveryById(deliveryId);
             if (delivery == null)

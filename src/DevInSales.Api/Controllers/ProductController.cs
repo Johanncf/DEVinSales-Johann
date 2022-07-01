@@ -36,7 +36,7 @@ namespace DevInSales.Api.Controllers
         /// <response code="404">Not Found. O Produto solicitado não existe.</response>
 
         [HttpGet("{id}")]
-        public ActionResult<Product> ObterProdutoPorId(int id)
+        public IActionResult ObterProdutoPorId(int id)
         {
             var produto = _productService.ObterProductPorId(id);
             if (produto == null)
@@ -64,7 +64,7 @@ namespace DevInSales.Api.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
-        public ActionResult AtualizarProduto(AddProductRequest model, int id)
+        public IActionResult AtualizarProduto(AddProductRequest model, int id)
         {
             var productOld = _productService.ObterProductPorId(id);
 

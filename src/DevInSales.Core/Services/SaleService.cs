@@ -55,7 +55,7 @@ namespace DevInSales.Core.Services
             return _context.SaleProducts
                 .Where(p => p.SaleId == id)
                 .Include(p => p.Products)
-                .Select(p => new SaleProductResponse(p.Products.Name, p.Amount, p.UnitPrice, p.Amount * p.UnitPrice))
+                .Select(p => new SaleProductResponse(p.Products.Name, p.Amount, p.UnitPrice))
                 .ToList();
         }
 

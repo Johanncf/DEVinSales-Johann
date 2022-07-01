@@ -52,10 +52,7 @@ namespace DevInSales.Api.Controllers
         {
 
             var users = _userService.GetUsers(nome, DataMin, DataMax);
-            if (users == null || users.Count == 0)
-                return NoContent();
-
-
+            
             return Ok(users);
         }
 
@@ -80,11 +77,11 @@ namespace DevInSales.Api.Controllers
         /// <response code="404">Not Found, estado não encontrado no stateId informado.</response>
         [HttpGet("{id}")]
         [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
-        public ActionResult<User> GetUserById(int id)
+        public IActionResult GetUserById(int id)
         {
             var userDTO = _userService.GetUserById(id);
             if (userDTO == null)
-                return NotFound();
+                return NotFound("Usuário não encontrado");
 
             return Ok(userDTO);
         }

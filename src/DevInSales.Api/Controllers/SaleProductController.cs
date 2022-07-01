@@ -21,7 +21,7 @@ namespace DevInSales.Api.Controllers
         // Endpoint criado apenas para servir como path do POST {saleId}/item
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet("saleById/item")]
-        public ActionResult<SaleProductResponse> GetSaleProductById(int saleProductId)
+        public IActionResult GetSaleProductById(int saleProductId)
         {
             var saleProductDTO = _saleProductService.GetSaleProductById(saleProductId);
             if (saleProductDTO == null)
@@ -40,7 +40,7 @@ namespace DevInSales.Api.Controllers
         [HttpPost("{saleId}/item")]
         [Authorize(Roles = $"{Roles.Admin}, {Roles.Gerente}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public ActionResult<int> CreateSaleProduct(int saleId, SaleProductRequest saleProduct)
+        public IActionResult CreateSaleProduct(int saleId, SaleProductRequest saleProduct)
         {
             try
             {

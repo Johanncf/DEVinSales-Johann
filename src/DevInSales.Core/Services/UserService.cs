@@ -47,7 +47,7 @@ namespace DevInSales.Core.Entities
                 .ThenInclude(userRole => userRole.Role)
                 .AsQueryable();
             if (!string.IsNullOrEmpty(name))
-                query = query.Where(p => string.IsNullOrWhiteSpace(name) ? true : p.Name.ToUpper().Contains(name.ToUpper()));
+                query = query.Where(p => p.Name.ToUpper().Contains(name.ToUpper()));
             if (!string.IsNullOrEmpty(DataMin))
                 query = query.Where(p => p.BirthDate >= DateTime.Parse(DataMin));
             if (!string.IsNullOrEmpty(DataMax))
